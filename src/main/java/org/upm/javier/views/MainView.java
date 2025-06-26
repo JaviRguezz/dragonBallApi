@@ -8,6 +8,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -45,12 +46,52 @@ public class MainView extends VerticalLayout {
         grid.setColumns("name", "ki", "maxKi", "affiliation");
         grid.addComponentColumn(this::botonesAcciones).setHeader("Acciones");
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        grid.setClassNameGenerator(p -> p.getDeletedAt() != null ? "deleted" : "");
     }
 
     private HorizontalLayout botonesAcciones(Personaje personaje) {
-        Button editar = new Button("Editar", e -> mostrarFormulario(personaje));
-        Button borrar = new Button("Eliminar", e -> eliminarPersonaje(personaje));
-        return new HorizontalLayout(editar, borrar);
+        Button detalle = new Button("Ver Detalles", e -> mostrarDetalle(personaje));
+        return new HorizontalLayout(detalle);
+    }
+
+    private void mostrarDetalle(Personaje personaje) {
+        Dialog dialog = new Dialog();
+        VerticalLayout layout = new VerticalLayout();
+        layout.add(new Image(personaje.getImage(), "Imagen"));
+        layout.add("Nombre: " + personaje.getName());
+        layout.add("Descripción: " + personaje.getDescription());
+        layout.add("Género: " + personaje.getGender());
+        layout.add("Afiliación: " + personaje.getAffiliation());
+        layout.add("Ki: " + personaje.getKi());
+        layout.add("Max Ki: " + personaje.getMaxKi());
+
+        Button editar = new Button("Editar", e -> {
+            dialog.close();
+            mostrarFormulario(personaje);
+        });
+
+        Button eliminar = new Button("Eliminar", e -> {
+            dialog.close();
+            mostrarConfirmacionEliminacion(personaje);
+        });
+
+        layout.add(new HorizontalLayout(editar, eliminar));
+        dialog.add(layout);
+        dialog.open();
+    }
+
+    private void mostrarConfirmacionEliminacion(Personaje personaje) {
+        Dialog confirmDialog = new Dialog();
+        confirmDialog.add("¿Estás seguro de eliminar este personaje?");
+
+        Button aceptar = new Button("Sí", e -> {
+            eliminarPersonaje(personaje);
+            confirmDialog.close();
+        });
+
+        Button cancelar = new Button("No", e -> confirmDialog.close());
+        confirmDialog.add(new HorizontalLayout(aceptar, cancelar));
+        confirmDialog.open();
     }
 
     private void mostrarFormulario(Personaje personaje) {
@@ -76,6 +117,11 @@ public class MainView extends VerticalLayout {
         }
 
         Button guardar = new Button("Guardar", e -> {
+            if (name.isEmpty() || ki.isEmpty()) {
+                Notification.show("Nombre y Ki son obligatorios");
+                return;
+            }
+
             Personaje nuevo = new Personaje();
             nuevo.setName(name.getValue());
             nuevo.setDescription(description.getValue());
@@ -84,10 +130,10 @@ public class MainView extends VerticalLayout {
             nuevo.setGender(gender.getValue());
             nuevo.setAffiliation(affiliation.getValue());
             nuevo.setImage(image.getValue());
-            nuevo.setDeletedAt(null);
 
             if (personaje != null) {
                 nuevo.setId(personaje.getId());
+                nuevo.setDeletedAt(personaje.getDeletedAt());
             }
 
             guardarPersonaje(nuevo);
@@ -95,8 +141,19 @@ public class MainView extends VerticalLayout {
             cargarPersonajes();
         });
 
+        if (personaje != null && personaje.getDeletedAt() != null) {
+            Button resucitar = new Button("Resucitar", e -> {
+                personaje.setDeletedAt(null);
+                guardarPersonaje(personaje);
+                dialog.close();
+                cargarPersonajes();
+            });
+            dialog.add(form, new HorizontalLayout(guardar, resucitar));
+        } else {
+            dialog.add(form, guardar);
+        }
+
         form.add(name, description, ki, maxKi, gender, affiliation, image);
-        dialog.add(form, guardar);
         dialog.open();
     }
 
@@ -104,7 +161,7 @@ public class MainView extends VerticalLayout {
         try {
             String json = gson.toJson(personaje);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl+"/save"))
+                    .uri(URI.create(apiUrl))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();

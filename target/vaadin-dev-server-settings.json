@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/./frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/./frontend/generated/jar-resources",
+  "staticOutput": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/target/classes/META-INF/VAADIN/config",
+  "frontendBundleOutput": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/target/classes/META-INF/VAADIN/webapp",
+  "devBundleOutput": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/target/dev-bundle/webapp",
+  "devBundleStatsOutput": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/target/dev-bundle/config",
+  "jarResourcesFolder": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/./frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "/Users/cesarpantoja/Documents/irdigital/proyectos/aria/dragonBallApi/target/sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
