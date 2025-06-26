@@ -67,3 +67,25 @@ Vaadin 24
 Gson
 
 Git
+
+
+TEST USANDO POSTMAN
+
+para crear :
+curl --location 'http://localhost:8080/personajes/save' \
+--header 'Content-Type: application/json' \
+--data '{
+"name": "Javier Rodriguez",
+"description": "Un guerrero legendario desconocido por el universo, aún por descubrir su verdadero poder.",
+"ki": "123456",
+"maxKi": "Infinity",
+"gender": "Male",
+"affiliation": "Z Fighter",
+"deletedAt": null,
+"id": "a291430b-1e79-468c-8efc-2abd54bacf52",
+
+    "image": "https://dragonball-api.com/characters/cesar_pantoja.webp"
+}'
+
+para LISTAR :
+curl --location 'localhost:8080/personajes/a291430b-1e79-468c-8efc-2abd54bacf52'
